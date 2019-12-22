@@ -56,6 +56,11 @@ return the collection of the outputs.
     * */
    int getActivationFunctionType();
 
+   /*
+      asuming it is the last layer this function will be called.
+   */
+   double lastLayerSigma(int neuronIndex, double expectedOutput);
+   
 private:
    int layerNeuronAmount;
    int eachNeuronEntiesAmount;

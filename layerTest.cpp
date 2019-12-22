@@ -83,7 +83,21 @@ int main() {
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         double* internal = layertArray[1].getOutputCollection();
         printf(" Layer1 getOutputCollection - %f == %f \n",internal[neuronIndex], 0.091);
-        assert( internal[neuronIndex] > 0.09 && internal[neuronIndex] < 0.92);
+        assert( internal[neuronIndex] > 0.09 && internal[neuronIndex] < 0.092);
+    }
+
+    double sigma ;
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        sigma = layertArray[0].lastLayerSigma(neuronIndex, 0.15);
+        printf("Validating sigma  %f \n", sigma);
+        assert( sigma > -0.01 && sigma < 0.01);
+    }
+
+    sigma = 0.0;
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        sigma = layertArray[1].lastLayerSigma(neuronIndex, 0.091);
+        printf("Validating sigma  %f \n", sigma);
+        assert( sigma > -0.01 && sigma < 0.01);
     }
 
     delete [] inputs;

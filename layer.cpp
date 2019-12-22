@@ -60,3 +60,6 @@ int Layer::getActivationFunctionType(){
    return activationFunctionType;
 }
 
+double Layer::lastLayerSigma(int neuronIndex, double expectedOutput){
+   return neuronArray[neuronIndex].lastLayerSigma(expectedOutput);
+}
