@@ -20,8 +20,9 @@ Layer::init(int neuronAmount, int activationType, int enties){
    this->outputCollection = new double [neuronAmount];
    this->neuronArray = new Neuron [neuronAmount];
    
-   for(int i = 0; i < neuronAmount; ++i)
+   for(int i = 0; i < neuronAmount; ++i){
       this->neuronArray[i].init(enties, activationType);
+   }
 }
 
 /*Get the number of dentrites*/
