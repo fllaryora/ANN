@@ -9,3 +9,8 @@ g++ -o exe -Wall neuronTest.cpp neuron.o
 
 compile layer
 g++ -c -Wall neuron.o layer.cpp
+
+test layer
+g++ -o exe -Wall layerTest.cpp  neuron.o layer.o
+
+

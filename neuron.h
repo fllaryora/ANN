@@ -26,6 +26,7 @@ Although this class is not responsible for learning. Another class will set the 
 #ifndef _NEURON_H_
 #define _NEURON_H_
 #include <math.h>
+
 #define SIGMOID(x) 1/(1+exp(-x)) ///because sigmoid func doesn't exists on math.h
 
 //activation function posibilities.

@@ -39,9 +39,8 @@ Neuron::thresshold(const double* const inputs){
    double vk= 0.0;
    
    for(i = 0; i < numberOfDentrites ; i++){
-      //printf("input %f \n", inputs[i]);
       vk += synapses[i] * inputs[i];
-      // printf("vk %f == %f >  %f \n",synapses[i], inputs[i], vk );
+      printf("vk %f == %f >  %f \n",synapses[i], inputs[i], vk );
    }
 
    switch (activationType) {
