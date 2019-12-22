@@ -36,11 +36,22 @@ enum {
    ACTIVATION_FUNCTION_LINEAL // the output is vk
 };
 
+enum {
+   BIAS_NONE, //do not use bias 
+	BIAS_POSITIVE,  //x0 = 1
+   BIAS_NEGATIVE //x0 = -1
+};
+
 class Neuron{
 public:
 
    Neuron(); //It doesn't anything
-   void init(int size, int activationType);
+   /*
+   biasType = it is the enum of the bias. Is the artifitiall entry.
+   activationType = it is the enum of the function activation
+   numberOfDentrites = it count only the real entries.
+   */
+   void init(int numberOfDentrites, int activationType, int biasType);
    ~Neuron();
    void setSynapses(const double* const synapses);
    double* getSynapses();
@@ -48,6 +59,21 @@ public:
    //the activation function is  0 or 1.
    double thresshold(const double* const inputs); 
    double getLastExit();
+
+  /*
+  Return real dentrites+bias dentrite if it exists.
+  */
+   int getNumberOfDentrites();
+
+  /*
+  Return bias type.
+  */
+   int getBiasType();
+
+   /*
+  Return getActivation Type.
+  */
+   int getActivationType();
    /*
    If this Neuron is in the last layer it will be called.
    */
@@ -61,6 +87,7 @@ public:
 private:
    int numberOfDentrites;
    int activationType;
+   int biasType;
    double * synapses;
    double lastExit;
 };

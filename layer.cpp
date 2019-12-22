@@ -13,15 +13,13 @@ Layer::Layer(){
 }
 
 void
-Layer::init(int neuronAmount, int activationType, int enties){
+Layer::init(int neuronAmount, int activationType, int enties, int biasType){
    this->layerNeuronAmount = neuronAmount;
-   this->eachNeuronEntiesAmount = enties;
-   this->activationFunctionType = activationType;
    this->outputCollection = new double [neuronAmount];
    this->neuronArray = new Neuron [neuronAmount];
    
    for(int i = 0; i < neuronAmount; ++i){
-      this->neuronArray[i].init(enties, activationType);
+      this->neuronArray[i].init(enties, activationType, biasType);
    }
 }
 
@@ -54,10 +52,6 @@ double* Layer::getOutputCollection(){
 
 int Layer::getLayerNeuronAmount(){
    return this->layerNeuronAmount;
-}
-
-int Layer::getActivationFunctionType(){
-   return activationFunctionType;
 }
 
 double Layer::lastLayerSigma(int neuronIndex, double expectedOutput){

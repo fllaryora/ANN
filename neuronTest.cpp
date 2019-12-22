@@ -22,9 +22,9 @@ int main() {
         }
     }
 
-    neuronArray[0].init(numberOfDentrites, ACTIVATION_FUNCTION_LINEAL);
-    neuronArray[1].init(numberOfDentrites, ACTIVATION_FUNCTION_SIGMOID);
-    neuronArray[2].init(numberOfDentrites, ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT);
+    neuronArray[0].init(numberOfDentrites, ACTIVATION_FUNCTION_LINEAL, BIAS_NONE);
+    neuronArray[1].init(numberOfDentrites, ACTIVATION_FUNCTION_SIGMOID, BIAS_NONE);
+    neuronArray[2].init(numberOfDentrites, ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT, BIAS_NONE);
     
     temporalWeight = initialWeight;
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){

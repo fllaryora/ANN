@@ -10,8 +10,18 @@ next call thresshold to get the activation function
 
 Neuron::Neuron(){}
 void 
-Neuron::init(int size, int activationType){
-   numberOfDentrites = size;
+Neuron::init(int numberOfDentrites, int activationType, int biasType){
+   this->biasType = biasType;
+   switch (biasType) {
+      case BIAS_NONE:
+         break;
+      case BIAS_POSITIVE:
+      case BIAS_NEGATIVE:
+         numberOfDentrites++;
+         break;
+      default: break;
+   }
+   this->numberOfDentrites = numberOfDentrites;
    this->activationType = activationType;
    synapses = new double[numberOfDentrites];
    return;
@@ -34,13 +44,34 @@ double* Neuron::getSynapses(){
 }
 
 double
-Neuron::thresshold(const double* const inputs){
-   int i;
-   double vk= 0.0;
-   
-   for(i = 0; i < numberOfDentrites ; i++){
-      vk += synapses[i] * inputs[i];
-      printf("vk %f == %f >  %f \n",synapses[i], inputs[i], vk );
+Neuron::thresshold(const double* const inputs) {
+   int inputIndex;
+   double vk;
+   int inputsAmount;
+   int synapsesOffset;
+
+   switch (biasType) {
+      case BIAS_NONE:
+         inputsAmount = numberOfDentrites;
+         vk = 0.0;
+         synapsesOffset = 0;
+         break;
+      case BIAS_POSITIVE:
+         inputsAmount = numberOfDentrites - 1;
+         synapsesOffset = 1;
+         vk = synapses[0];
+         break;
+      case BIAS_NEGATIVE:
+         inputsAmount = numberOfDentrites - 1;
+         synapsesOffset = 1;
+         vk = -synapses[0];
+         break;
+      default: break;
+   }
+
+   for(inputIndex = 0; inputIndex < inputsAmount ; inputIndex++){
+      vk += synapses[inputIndex+synapsesOffset] * inputs[inputIndex];
+      printf("vk %f == %f >  %f \n",synapses[inputIndex+synapsesOffset], inputs[inputIndex], vk );
    }
 
    switch (activationType) {
@@ -63,6 +94,18 @@ Neuron::thresshold(const double* const inputs){
 double Neuron::getLastExit(){
    return lastExit;
 }
+
+int Neuron::getNumberOfDentrites(){
+   return numberOfDentrites;
+}
+
+int Neuron:: getBiasType(){
+   return biasType;
+}
+
+ int Neuron::getActivationType(){
+    return activationType;
+ }
 
 /*
 sigma = -error * f'()

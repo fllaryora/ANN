@@ -17,9 +17,11 @@ public:
 /**
   neuronAmount = amount of neurons in the layer
   activationType = activacion function type read neuron.h for more information.
-  enties = This is the number of inputs that each neuron will have.
+  biasType = enum of type of bias
+  enties = This is the number of inputs that each neuron will have. (not include the bias entry)
+  
 */
-   void init(int neuronAmount, int activationType, int enties);
+   void init(int neuronAmount, int activationType, int enties, int biasType);
 
    ~Layer();
 
@@ -51,11 +53,6 @@ return the collection of the outputs.
     * */
    int getLayerNeuronAmount();
 
-   /**
-    * return activation tipe enum
-    * */
-   int getActivationFunctionType();
-
    /*
       asuming it is the last layer this function will be called.
    */
@@ -68,9 +65,7 @@ return the collection of the outputs.
    
 private:
    int layerNeuronAmount;
-   int eachNeuronEntiesAmount;
    double* outputCollection;
    Neuron* neuronArray;
-   int activationFunctionType;
 };
 #endif //_LAYER_H_

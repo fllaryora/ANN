@@ -16,15 +16,12 @@ int main() {
     Layer* layertArray = new Layer [layersAmount];
   
     layertArray[0].init(neuronAmount,
-       ACTIVATION_FUNCTION_LINEAL, numberOfDentritesSeven);
+       ACTIVATION_FUNCTION_LINEAL, numberOfDentritesSeven, BIAS_NONE);
     layertArray[1].init(neuronAmount,
-       ACTIVATION_FUNCTION_LINEAL, numberOfDentritesSix);
+       ACTIVATION_FUNCTION_LINEAL, numberOfDentritesSix, BIAS_POSITIVE);
 
     printf("Neuron amount %i == %i \n",layertArray[0].getLayerNeuronAmount() , neuronAmount);
     assert(layertArray[1].getLayerNeuronAmount() == neuronAmount);
-
-    printf("Neuron activation type %i == %i \n",layertArray[1].getActivationFunctionType() , ACTIVATION_FUNCTION_LINEAL);
-    assert(layertArray[1].getActivationFunctionType() == ACTIVATION_FUNCTION_LINEAL);
 
     //create weights & input map
     for(int neuronIndex = 0 ;neuronIndex < numberOfDentritesSeven;neuronIndex++ ){
@@ -55,7 +52,7 @@ int main() {
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeight = initialWeight;
         double* internal = layertArray[1].getSynapsesForNeuronAt(neuronIndex);
-        for(int dentriteIndex = 0 ;dentriteIndex < numberOfDentritesSix;dentriteIndex++ ){
+        for(int dentriteIndex = 0 ;dentriteIndex < (numberOfDentritesSix+1);dentriteIndex++ ){
              printf("Layer1 weights %f == %f \n",internal[dentriteIndex], temporalWeight);
             assert(internal[dentriteIndex] == temporalWeight);
             temporalWeight += 0.01;
@@ -82,8 +79,8 @@ int main() {
 
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         double* internal = layertArray[1].getOutputCollection();
-        printf(" Layer1 getOutputCollection - %f == %f \n",internal[neuronIndex], 0.091);
-        assert( internal[neuronIndex] > 0.09 && internal[neuronIndex] < 0.092);
+        printf(" Layer1 getOutputCollection - %f == %f \n",internal[neuronIndex], 0.122);
+        assert( internal[neuronIndex] > 0.121 && internal[neuronIndex] < 0.123);
     }
 
     double sigma ;
@@ -94,7 +91,7 @@ int main() {
     }
 
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
-        sigma = layertArray[1].lastLayerSigma(neuronIndex, 0.091);
+        sigma = layertArray[1].lastLayerSigma(neuronIndex, 0.122);
         printf("Validating sigma  %f \n", sigma);
         assert( sigma > -0.01 && sigma < 0.01);
     }
@@ -106,9 +103,9 @@ int main() {
     }
 
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
-        sigma = layertArray[1].currentLayerSigma(neuronIndex, 0.091);
+        sigma = layertArray[1].currentLayerSigma(neuronIndex, 0.122);
         printf("Validating sigma  %f \n", sigma);
-        assert( sigma > 0.09 && sigma < 0.092);
+        assert( sigma > 0.121 && sigma < 0.123);
     }
 
     delete [] inputs;
