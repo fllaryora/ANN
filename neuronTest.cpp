@@ -64,6 +64,24 @@ int main() {
         }
     }
 
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        double outputCollection = neuronArray[neuronIndex].getLastExit(); 
+        printf("Validating getLastExit, the element %i == %f \n", neuronIndex, outputCollection);
+        switch (neuronIndex){
+        case 0:
+            assert( outputCollection > 0.139 && outputCollection < 0.141);
+            break;
+        case 1:
+            assert( outputCollection > 0.704 && outputCollection < 0.706);
+            break;
+        case 2:
+            assert( outputCollection > 0.97 && outputCollection < 0.98);
+            break;
+        default:
+            break;
+        }
+    }
+
     delete [] inputs;
     delete [] weights;
     delete [] synapses;

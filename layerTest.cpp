@@ -74,6 +74,18 @@ int main() {
         assert( internal[neuronIndex] > 0.09 && internal[neuronIndex] < 0.92);
     }
 
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        double* internal = layertArray[0].getOutputCollection();
+        printf(" Layer0 getOutputCollection - %f == %f \n",internal[neuronIndex], 0.14);
+        assert( internal[neuronIndex] > 0.139 && internal[neuronIndex] < 0.141);
+    }
+
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        double* internal = layertArray[1].getOutputCollection();
+        printf(" Layer1 getOutputCollection - %f == %f \n",internal[neuronIndex], 0.091);
+        assert( internal[neuronIndex] > 0.09 && internal[neuronIndex] < 0.92);
+    }
+
     delete [] inputs;
     delete [] synapses;
     delete [] layertArray;
