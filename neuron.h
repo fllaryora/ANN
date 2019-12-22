@@ -48,6 +48,10 @@ public:
    //the activation function is  0 or 1.
    double thresshold(const double* const inputs); 
    double getLastExit();
+   /*
+   If this Neuron is in the last layer it will be called.
+   */
+   double lastLayerSigma(double expectedOutput);
 
 private:
    int numberOfDentrites;

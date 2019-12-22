@@ -64,3 +64,24 @@ double Neuron::getLastExit(){
    return lastExit;
 }
 
+/*
+sigma = -error * f'()
+*/
+double Neuron::lastLayerSigma(double expectedOutput){
+   double error = expectedOutput -lastExit;
+   double sigma ;
+   switch (activationType) {
+      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
+         sigma = -error*2.0*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_SIGMOID:
+         sigma = -error*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_LINEAL:
+         sigma = -error;
+         break;
+      default: break;
+   }
+   return sigma;
+}
+

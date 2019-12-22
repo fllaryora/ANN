@@ -81,6 +81,28 @@ int main() {
             break;
         }
     }
+    double sigma ;
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        switch (neuronIndex){
+        case 0:
+            sigma = neuronArray[neuronIndex].lastLayerSigma(0.15); 
+            printf("Validating sigma  %f \n", sigma);
+            assert( sigma > -0.01 && sigma < 0.01);
+            break;
+        case 1:
+             sigma = neuronArray[neuronIndex].lastLayerSigma(0.708); 
+            printf("Validating sigma  %f \n", sigma);
+            assert( sigma > -0.01 && sigma < 0.01);
+            break;
+        case 2:
+             sigma = neuronArray[neuronIndex].lastLayerSigma(0.908);
+            printf("Validating sigma  %f \n", sigma); 
+            assert( sigma > -0.01 && sigma < 0.01);
+            break;
+        default:
+            break;
+        }
+    }
 
     delete [] inputs;
     delete [] weights;
