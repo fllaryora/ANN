@@ -29,18 +29,15 @@ int main() {
             inputs[neuronIndex] = temporalWeight*10.0;
             temporalWeight += 0.01;
     }
-
+   
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
-        layertArray[0].setSynapsesForNeuronAt(neuronIndex,synapses);
+        layertArray[0].getNeuronAt(neuronIndex)->setSynapses(synapses);
+        layertArray[1].getNeuronAt(neuronIndex)->setSynapses(synapses);
     }
-
-    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
-        layertArray[1].setSynapsesForNeuronAt(neuronIndex,synapses);
-    }
-
+    
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeight = initialWeight;
-        double* internal = layertArray[0].getSynapsesForNeuronAt(neuronIndex);
+        double* internal = layertArray[0].getNeuronAt(neuronIndex)->getSynapses();
         for(int dentriteIndex = 0 ;dentriteIndex < numberOfDentritesSeven;dentriteIndex++ ){
              printf(" Layer0 weights %i - %f == %f \n",dentriteIndex, internal[dentriteIndex], temporalWeight);
             assert(internal[dentriteIndex] == temporalWeight);
@@ -51,7 +48,7 @@ int main() {
     temporalWeight = initialWeight;
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeight = initialWeight;
-        double* internal = layertArray[1].getSynapsesForNeuronAt(neuronIndex);
+        double* internal = layertArray[1].getNeuronAt(neuronIndex)->getSynapses();
         for(int dentriteIndex = 0 ;dentriteIndex < (numberOfDentritesSix+1);dentriteIndex++ ){
              printf("Layer1 weights %f == %f \n",internal[dentriteIndex], temporalWeight);
             assert(internal[dentriteIndex] == temporalWeight);

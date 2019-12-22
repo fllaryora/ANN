@@ -26,16 +26,9 @@ public:
    ~Layer();
 
    /*
-    For the neuron in position i of the layer (start at 0),
-    it will be assigned a list of synapses for each of its corresponding entries.
-   */
-   void setSynapsesForNeuronAt(int index, const double* const newSynapses);
-
-   /*
    For the neuron in position i of the layer (start at 0),
-   return a collection of the current synaps
    */
-   double* getSynapsesForNeuronAt(int index);
+   Neuron* getNeuronAt(int index);
 
 /*
 It apply the same inputs for the all neurons in the layer.
@@ -48,6 +41,7 @@ return the collection of the outputs.
  * return a collection of last Exit of each neuron in this layer
 */
    double* getOutputCollection();
+
    /**
     * return layer Neuron Amount
     * */

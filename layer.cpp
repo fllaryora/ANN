@@ -29,14 +29,8 @@ Layer::~Layer(){
    delete [] neuronArray;
 }
 
-void
-Layer::setSynapsesForNeuronAt(int index, const double* const newSynapses){
-   neuronArray[index].setSynapses(newSynapses);
-   return;
-}
-
-double* Layer::getSynapsesForNeuronAt(int index){
-   return neuronArray[index].getSynapses();
+Neuron* Layer:: getNeuronAt(int index){
+   return &neuronArray[index];
 }
 
 double*
