@@ -67,7 +67,7 @@ double Neuron::getLastExit(){
 /*
 sigma = -error * f'()
 */
-double Neuron::lastLayerSigma(double expectedOutput){
+double Neuron::lastNeuronSigma(double expectedOutput){
    double error = expectedOutput -lastExit;
    double sigma ;
    switch (activationType) {
@@ -85,3 +85,22 @@ double Neuron::lastLayerSigma(double expectedOutput){
    return sigma;
 }
 
+/*
+sigma =summation  * f'()
+*/
+double Neuron::currentNeuronSigma(double summation){
+   double sigma ;
+   switch (activationType) {
+      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
+         sigma = summation*2.0*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_SIGMOID:
+         sigma = summation*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_LINEAL:
+         sigma = summation;
+         break;
+      default: break;
+   }
+   return sigma;
+}

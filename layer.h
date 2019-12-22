@@ -60,6 +60,11 @@ return the collection of the outputs.
       asuming it is the last layer this function will be called.
    */
    double lastLayerSigma(int neuronIndex, double expectedOutput);
+
+   /*
+      return sigma of summation
+   */
+   double currentLayerSigma(int neuronIndex, double summation);
    
 private:
    int layerNeuronAmount;

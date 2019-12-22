@@ -93,11 +93,22 @@ int main() {
         assert( sigma > -0.01 && sigma < 0.01);
     }
 
-    sigma = 0.0;
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         sigma = layertArray[1].lastLayerSigma(neuronIndex, 0.091);
         printf("Validating sigma  %f \n", sigma);
         assert( sigma > -0.01 && sigma < 0.01);
+    }
+ 
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        sigma = layertArray[0].currentLayerSigma(neuronIndex, 0.15);
+        printf("Validating sigma  %f \n", sigma);
+        assert( sigma > 0.14 && sigma < 0.16);
+    }
+
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        sigma = layertArray[1].currentLayerSigma(neuronIndex, 0.091);
+        printf("Validating sigma  %f \n", sigma);
+        assert( sigma > 0.09 && sigma < 0.092);
     }
 
     delete [] inputs;

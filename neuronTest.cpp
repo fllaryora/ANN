@@ -85,19 +85,41 @@ int main() {
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         switch (neuronIndex){
         case 0:
-            sigma = neuronArray[neuronIndex].lastLayerSigma(0.15); 
+            sigma = neuronArray[neuronIndex].lastNeuronSigma(0.15); 
             printf("Validating sigma  %f \n", sigma);
             assert( sigma > -0.01 && sigma < 0.01);
             break;
         case 1:
-             sigma = neuronArray[neuronIndex].lastLayerSigma(0.708); 
+             sigma = neuronArray[neuronIndex].lastNeuronSigma(0.708); 
             printf("Validating sigma  %f \n", sigma);
             assert( sigma > -0.01 && sigma < 0.01);
             break;
         case 2:
-             sigma = neuronArray[neuronIndex].lastLayerSigma(0.908);
+             sigma = neuronArray[neuronIndex].lastNeuronSigma(0.908);
             printf("Validating sigma  %f \n", sigma); 
             assert( sigma > -0.01 && sigma < 0.01);
+            break;
+        default:
+            break;
+        }
+    }
+
+    for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
+        switch (neuronIndex){
+        case 0:
+            sigma = neuronArray[neuronIndex].currentNeuronSigma(0.15); 
+            printf("Validating currentNeuronSigma  %f \n", sigma);
+            assert( sigma > 0.14 && sigma < 0.16);
+            break;
+        case 1:
+             sigma = neuronArray[neuronIndex].currentNeuronSigma(0.708); 
+            printf("Validating currentNeuronSigma  %f \n", sigma);
+            assert( sigma > 0.13 && sigma < 0.15);
+            break;
+        case 2:
+             sigma = neuronArray[neuronIndex].currentNeuronSigma(0.908);
+            printf("Validating currentNeuronSigma  %f \n", sigma); 
+            assert( sigma > 0.02 && sigma < 0.05);
             break;
         default:
             break;

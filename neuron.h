@@ -51,7 +51,12 @@ public:
    /*
    If this Neuron is in the last layer it will be called.
    */
-   double lastLayerSigma(double expectedOutput);
+   double lastNeuronSigma(double expectedOutput);
+
+   /*
+   return sigma of the neuron
+   */
+   double currentNeuronSigma(double expectedOutput);
 
 private:
    int numberOfDentrites;

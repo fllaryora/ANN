@@ -61,5 +61,9 @@ int Layer::getActivationFunctionType(){
 }
 
 double Layer::lastLayerSigma(int neuronIndex, double expectedOutput){
-   return neuronArray[neuronIndex].lastLayerSigma(expectedOutput);
+   return neuronArray[neuronIndex].lastNeuronSigma(expectedOutput);
+}
+
+double Layer::currentLayerSigma(int neuronIndex, double summation){
+   return neuronArray[neuronIndex].currentNeuronSigma(summation);
 }
