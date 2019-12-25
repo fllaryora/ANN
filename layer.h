@@ -30,36 +30,13 @@ public:
    */
    Neuron* getNeuronAt(int index);
 
-/*
-It apply the same inputs for the all neurons in the layer.
-Each output of its corresponding neuron is collected 
-return the collection of the outputs.
-*/
-   double* rankThresshold(const double* const inputs);
-
-/**
- * return a collection of last Exit of each neuron in this layer
-*/
-   double* getOutputCollection();
-
    /**
     * return layer Neuron Amount
     * */
    int getLayerNeuronAmount();
-
-   /*
-      asuming it is the last layer this function will be called.
-   */
-   double lastLayerSigma(int neuronIndex, double expectedOutput);
-
-   /*
-      return sigma of summation
-   */
-   double currentLayerSigma(int neuronIndex, double summation);
    
 private:
    int layerNeuronAmount;
-   double* outputCollection;
    Neuron* neuronArray;
 };
 #endif //_LAYER_H_

@@ -28,11 +28,47 @@ Neuron::init(int numberOfDentrites, int activationType, int biasType){
 }
 
 Neuron::~Neuron(){
+   printf("=========~Neuron============ \n");
    delete []synapses;
 }
 
+ double Neuron::activationFunction(double vk) {
+   double result ;
+   switch (activationType) {
+      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
+         result = tanh(vk);
+         break;
+      case ACTIVATION_FUNCTION_SIGMOID:
+         result = SIGMOID(vk);
+         break;
+      case ACTIVATION_FUNCTION_LINEAL:
+         result = vk;
+         break;
+      default: break;
+   }
+   printf("vk == %f  \n", vk);
+   return result;
+ }
+
+double Neuron::activationFunctionDerivated(double summation) {
+   double result ;
+  switch (activationType) {
+      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
+         result = summation*2.0*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_SIGMOID:
+         result = summation*lastExit*(1.0-lastExit);
+         break;
+      case ACTIVATION_FUNCTION_LINEAL:
+         result = summation;
+         break;
+      default: break;
+   }
+   return result;
+}
+
 void
-Neuron::setSynapses(const double* const newSynapses){
+Neuron::setSynapses(const double* const newSynapses) {
    int i;
    for(i = 0; i < numberOfDentrites ; i++)
       synapses[i] = newSynapses[i];
@@ -44,51 +80,27 @@ double* Neuron::getSynapses(){
 }
 
 double
-Neuron::thresshold(const double* const inputs) {
-   int inputIndex;
-   double vk;
-   int inputsAmount;
-   int synapsesOffset;
+Neuron::getOutput(const double* const inputs) {
+   double vk = 0.0;
+   int inputsAmount = numberOfDentrites;
+   int synapsesOffset = 0;
 
-   switch (biasType) {
-      case BIAS_NONE:
-         inputsAmount = numberOfDentrites;
-         vk = 0.0;
-         synapsesOffset = 0;
-         break;
-      case BIAS_POSITIVE:
-         inputsAmount = numberOfDentrites - 1;
-         synapsesOffset = 1;
-         vk = synapses[0];
-         break;
-      case BIAS_NEGATIVE:
-         inputsAmount = numberOfDentrites - 1;
-         synapsesOffset = 1;
-         vk = -synapses[0];
-         break;
-      default: break;
+   if (biasType != BIAS_NONE) {
+      inputsAmount = numberOfDentrites - 1;
+      synapsesOffset = 1;
+      if(biasType == BIAS_POSITIVE) {
+          vk += synapses[0] * 1;
+      }
+      if(biasType == BIAS_NEGATIVE) {
+          vk += synapses[0] * -1;
+      }
    }
 
-   for(inputIndex = 0; inputIndex < inputsAmount ; inputIndex++){
+   for(int inputIndex = 0; inputIndex < inputsAmount ; inputIndex++){
       vk += synapses[inputIndex+synapsesOffset] * inputs[inputIndex];
-      printf("vk %f == %f >  %f \n",synapses[inputIndex+synapsesOffset], inputs[inputIndex], vk );
    }
-
-   switch (activationType) {
-      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
-         lastExit = tanh(vk);
-         break;
-      case ACTIVATION_FUNCTION_SIGMOID:
-         lastExit = SIGMOID(vk);
-         break;
-      case ACTIVATION_FUNCTION_LINEAL:
-         lastExit = vk;
-         break;
-      default: break;
-   }
-
-   //printf("fron neuron %f \n", lastExit);
-   return lastExit;
+   this->lastExit = activationFunction(vk);
+   return this->lastExit;
 }
 
 double Neuron::getLastExit(){
@@ -111,39 +123,12 @@ int Neuron:: getBiasType(){
 sigma = -error * f'()
 */
 double Neuron::lastNeuronSigma(double expectedOutput){
-   double error = expectedOutput -lastExit;
-   double sigma ;
-   switch (activationType) {
-      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
-         sigma = -error*2.0*lastExit*(1.0-lastExit);
-         break;
-      case ACTIVATION_FUNCTION_SIGMOID:
-         sigma = -error*lastExit*(1.0-lastExit);
-         break;
-      case ACTIVATION_FUNCTION_LINEAL:
-         sigma = -error;
-         break;
-      default: break;
-   }
-   return sigma;
+   return activationFunctionDerivated(lastExit - expectedOutput);
 }
 
 /*
-sigma =summation  * f'()
+sigma = summation  * f'()
 */
-double Neuron::currentNeuronSigma(double summation){
-   double sigma ;
-   switch (activationType) {
-      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
-         sigma = summation*2.0*lastExit*(1.0-lastExit);
-         break;
-      case ACTIVATION_FUNCTION_SIGMOID:
-         sigma = summation*lastExit*(1.0-lastExit);
-         break;
-      case ACTIVATION_FUNCTION_LINEAL:
-         sigma = summation;
-         break;
-      default: break;
-   }
-   return sigma;
+double Neuron::currentNeuronSigma(double summation) {
+   return activationFunctionDerivated(summation);
 }

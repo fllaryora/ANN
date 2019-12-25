@@ -47,7 +47,7 @@ int main() {
 
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeights = &inputs[indexW(numberOfDentrites,neuronIndex,0)];
-        double outputCollection = neuronArray[neuronIndex].thresshold(temporalWeights); 
+        double outputCollection = neuronArray[neuronIndex].getOutput(temporalWeights); 
         printf("Validating output, the element %i == %f \n", neuronIndex, outputCollection);
         switch (neuronIndex){
         case 0:
@@ -129,6 +129,6 @@ int main() {
     delete [] inputs;
     delete [] weights;
     delete [] synapses;
-    delete [] neuronArray;
+    delete [] neuronArray; //invoke the destructor !!
     return 0; 
 } 

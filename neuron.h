@@ -55,9 +55,8 @@ public:
    ~Neuron();
    void setSynapses(const double* const synapses);
    double* getSynapses();
-   //TODO: rename it only can be consider thresshold if the output of
-   //the activation function is  0 or 1.
-   double thresshold(const double* const inputs); 
+
+   double getOutput(const double* const inputs); 
    double getLastExit();
 
   /*
@@ -82,7 +81,9 @@ public:
    /*
    return sigma of the neuron
    */
-   double currentNeuronSigma(double expectedOutput);
+   double currentNeuronSigma(double summation);
+
+   void getSigma();
 
 private:
    int numberOfDentrites;
@@ -90,6 +91,9 @@ private:
    int biasType;
    double * synapses;
    double lastExit;
+   double activationFunction(double vk);
+   double activationFunctionDerivated(double vk);
+
 };
 #endif //_NEURON_H_
 

@@ -14,11 +14,15 @@ class ArtificialNeuralNetwork{
 public:
 /*
 layers = amount of layers
+enties = number of entries of the first layer
 neuronsPerLayer = is a collection on amount of neurons in each layer.
 activationFunctionType = activation function  for all layers except the last one.
 lastLayerActivationFunction = activation function  for  last layer.
+
+So what is the amount of outputs?
+The amount of output is the number of neurons of the last layer !!
 */
-   ArtificialNeuralNetwork(int layers, int* neuronsPerLayer,
+   ArtificialNeuralNetwork(int layers, int enties, int* neuronsPerLayer,
  int activationFunctionType, int lastLayerActivationFunction,
   int biasType); 
    ~ArtificialNeuralNetwork();
@@ -32,12 +36,9 @@ lastLayerActivationFunction = activation function  for  last layer.
 return a colection of values of the last layer
 It is the output of the neuronal Network
 */
-   double* sThresshold(const double* const inputs); 
+   double* getOutput(const double* const inputs); 
 
-   /*
-   calculate the error gotten
-   */
-   double sigma(int layerIndex, int I, double expectedOutput);
+  
 
    /* 
    calculate the error gotten and set a new set of synapses.
@@ -52,9 +53,12 @@ It is the output of the neuronal Network
 private:
    int layersAmount;
    double* outputOfTheLastLayer;
-   double* temporalOutputOfLayer;
    Layer* layertArray;
    int maxAmountOfNeuronsInALayer;
+   /*
+   calculate the error gotten
+   */
+   double sigma(int layerIndex, int I, double expectedOutput);
 };
 #endif //_CONNECTOR_H_
 
