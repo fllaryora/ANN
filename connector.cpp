@@ -45,20 +45,20 @@ Layer* ArtificialNeuralNetwork::getLayer(int layerIndex){
 }
 
 double*
-ArtificialNeuralNetwork::getOutput(const double* const inputs){
+ArtificialNeuralNetwork::getOutput(int length, const double* const inputs){
    double* temporalOutputOfLayer = new double [maxAmountOfNeuronsInALayer];
    double* temporalOutputOfLayer2 = new double [maxAmountOfNeuronsInALayer];
-
+   int newInputLength = 0;
    //a bug of g++ here
    //use the pointer always other wise the end of the for will call the destructor for you.
    Layer* layer = &layertArray[0];
    int neuronAmount = layer->getLayerNeuronAmount();
     for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
        printf("=========PRE===%i=====%i==== \n",0,neuronIndex);
-      temporalOutputOfLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getOutput(inputs);
+      temporalOutputOfLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getOutput(length, inputs);
       printf("=========POST============ \n");
    }
-
+   newInputLength = neuronAmount;
    for(int layerIndex = 1; layerIndex < layersAmount ; layerIndex++) {
       //a bug of g++ here
       //use the pointer always other wise the end of the for will call the destructor for you.
@@ -68,14 +68,15 @@ ArtificialNeuralNetwork::getOutput(const double* const inputs){
          Neuron* neuron = layer->getNeuronAt(neuronIndex);
          if ( layerIndex & 1 ) {
             printf("=========PRE===%i=====%i==== \n",layerIndex,neuronIndex);
-            temporalOutputOfLayer2[neuronIndex] = neuron->getOutput(temporalOutputOfLayer);
+            temporalOutputOfLayer2[neuronIndex] = neuron->getOutput(newInputLength, temporalOutputOfLayer);
             printf("=========POS============ \n");
          } else {
             printf("=========PRE===%i=====%i==== \n",layerIndex,neuronIndex);
-            temporalOutputOfLayer[neuronIndex] = neuron->getOutput(temporalOutputOfLayer2);
+            temporalOutputOfLayer[neuronIndex] = neuron->getOutput(newInputLength, temporalOutputOfLayer2);
             printf("=========POS============ \n");
          }
       }
+      newInputLength = neuronAmount;
    }
    printf("=========COPY TIME============ \n");
    layer = &layertArray[layersAmount-1];
@@ -100,9 +101,6 @@ ArtificialNeuralNetwork::getOutput(const double* const inputs){
 }
 
 double ArtificialNeuralNetwork::sigma(int layerIndex, int neuronIndex, double expectedOutput) {
-   double sI;
-   double* wIN;
-   double summation = 0.0;
 
    //exit condition: If I'm the last layer
    if(layerIndex == (layersAmount-1) ){
@@ -110,6 +108,9 @@ double ArtificialNeuralNetwork::sigma(int layerIndex, int neuronIndex, double ex
          lastNeuronSigma(expectedOutput);
    }
 
+   double sI;
+   double* wIN;
+   double summation = 0.0;
    //otherwise get the summation of
    // the sigmas multiplied by synaptic weight going from the current neuron 
    //to that neuron of next layer

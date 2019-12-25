@@ -66,13 +66,13 @@ int main() {
       ACTIVATION_FUNCTION_SIGMOID,
       BIAS_POSITIVE);
 
-   ann.getLayer(0)->getNeuronAt(0)->setSynapses(w11);
-   ann.getLayer(0)->getNeuronAt(1)->setSynapses(w12);
-   ann.getLayer(1)->getNeuronAt(0)->setSynapses(w21);
-   ann.getLayer(1)->getNeuronAt(1)->setSynapses(w22);
-   ann.getLayer(2)->getNeuronAt(0)->setSynapses(w31);
+   ann.getLayer(0)->getNeuronAt(0)->setSynapses(3, w11);
+   ann.getLayer(0)->getNeuronAt(1)->setSynapses(3, w12);
+   ann.getLayer(1)->getNeuronAt(0)->setSynapses(3, w21);
+   ann.getLayer(1)->getNeuronAt(1)->setSynapses(3, w22);
+   ann.getLayer(2)->getNeuronAt(0)->setSynapses(3, w31);
    
-   double* output = ann.getOutput(inputs);
+   double* output = ann.getOutput(2, inputs);
    
    printf("output  %f == %f \n",*output, expectedOutcome31);
    assert(abs(*output - expectedOutcome31) < 0.01);

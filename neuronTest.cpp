@@ -29,9 +29,8 @@ int main() {
     temporalWeight = initialWeight;
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeights = &weights[indexW(numberOfDentrites,neuronIndex,0)];
-        neuronArray[neuronIndex].setSynapses(temporalWeights);
+            neuronArray[neuronIndex].setSynapses(7, temporalWeights);
     }
-
     //validate synapsis values
     temporalWeight = initialWeight;
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
@@ -47,7 +46,8 @@ int main() {
 
     for(int neuronIndex = 0 ;neuronIndex < neuronAmount;neuronIndex++ ){
         temporalWeights = &inputs[indexW(numberOfDentrites,neuronIndex,0)];
-        double outputCollection = neuronArray[neuronIndex].getOutput(temporalWeights); 
+        printf("Validating inputs of  the neuron %i \n",neuronIndex);
+        double  outputCollection = neuronArray[neuronIndex].getOutput(numberOfDentrites, temporalWeights); 
         printf("Validating output, the element %i == %f \n", neuronIndex, outputCollection);
         switch (neuronIndex){
         case 0:

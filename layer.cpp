@@ -8,12 +8,19 @@ next call rankThresshold to get the activation function array
 #include <stdio.h>
 #include "layer.h"
 #include "neuron.h"
+#include <assert.h>
 
 Layer::Layer(){
 }
 
 void
 Layer::init(int neuronAmount, int activationType, int enties, int biasType){
+   if (neuronAmount <= 0){
+      printf("=========neuronAmount per layer must be at least 1============ \n");
+      assert(false);
+   }
+   
+
    this->layerNeuronAmount = neuronAmount;
    this->neuronArray = new Neuron [neuronAmount];
    

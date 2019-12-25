@@ -53,10 +53,10 @@ public:
    */
    void init(int numberOfDentrites, int activationType, int biasType);
    ~Neuron();
-   void setSynapses(const double* const synapses);
+   void setSynapses(int inputLength, const double* const synapses);
    double* getSynapses();
 
-   double getOutput(const double* const inputs); 
+   double getOutput(int inputLength, const double* const inputs); 
    double getLastExit();
 
   /*
@@ -93,6 +93,9 @@ private:
    double lastExit;
    double activationFunction(double vk);
    double activationFunctionDerivated(double vk);
+   void validateNeuronInputs(int numberOfDentrites, int activationType, int biasType);
+   void validateDentrites(int numberOfDentrites);
+   void validateInputs(int inputs);
 
 };
 #endif //_NEURON_H_

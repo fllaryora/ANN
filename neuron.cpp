@@ -7,11 +7,13 @@ next call thresshold to get the activation function
 #include "neuron.h"
 #include <math.h>
 #include <stdio.h>
+#include <assert.h>
 
 Neuron::Neuron(){}
 void 
 Neuron::init(int numberOfDentrites, int activationType, int biasType){
-   this->biasType = biasType;
+  validateNeuronInputs( numberOfDentrites,  activationType,  biasType);
+   
    switch (biasType) {
       case BIAS_NONE:
          break;
@@ -21,6 +23,8 @@ Neuron::init(int numberOfDentrites, int activationType, int biasType){
          break;
       default: break;
    }
+
+   this->biasType = biasType;
    this->numberOfDentrites = numberOfDentrites;
    this->activationType = activationType;
    synapses = new double[numberOfDentrites];
@@ -30,6 +34,34 @@ Neuron::init(int numberOfDentrites, int activationType, int biasType){
 Neuron::~Neuron(){
    printf("=========~Neuron============ \n");
    delete []synapses;
+}
+
+void
+Neuron:: validateNeuronInputs(int numberOfDentrites, int activationType, int biasType) {
+ if(numberOfDentrites < 1) {
+      printf("=========numberOfDentrites must be >= 1============ \n");
+      assert(numberOfDentrites < 1);
+   }
+
+   switch (biasType) {
+      case BIAS_NONE:
+      case BIAS_POSITIVE:
+      case BIAS_NEGATIVE: break;
+      default:
+         printf("=========this biasType is unimplemented============ \n");
+         assert( false);
+       break;
+   }
+
+   switch (activationType) {
+      case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
+      case ACTIVATION_FUNCTION_SIGMOID:
+      case ACTIVATION_FUNCTION_LINEAL: break;
+      default:
+         printf("=========this activationType is unimplemented============ \n");
+         assert( false);
+      break;
+   }
 }
 
  double Neuron::activationFunction(double vk) {
@@ -68,10 +100,10 @@ double Neuron::activationFunctionDerivated(double summation) {
 }
 
 void
-Neuron::setSynapses(const double* const newSynapses) {
-   int i;
-   for(i = 0; i < numberOfDentrites ; i++)
-      synapses[i] = newSynapses[i];
+Neuron::setSynapses(int inputLength, const double* const newSynapses) {
+   validateDentrites(inputLength);
+   for(int dentriteIndex = 0; dentriteIndex < numberOfDentrites ; dentriteIndex++)
+      synapses[dentriteIndex] = newSynapses[dentriteIndex];
    return;
 }
 
@@ -80,13 +112,13 @@ double* Neuron::getSynapses(){
 }
 
 double
-Neuron::getOutput(const double* const inputs) {
+Neuron::getOutput(int inputLength, const double* const inputs) {
+   validateInputs(inputLength);
    double vk = 0.0;
-   int inputsAmount = numberOfDentrites;
+   
    int synapsesOffset = 0;
 
    if (biasType != BIAS_NONE) {
-      inputsAmount = numberOfDentrites - 1;
       synapsesOffset = 1;
       if(biasType == BIAS_POSITIVE) {
           vk += synapses[0] * 1;
@@ -96,7 +128,7 @@ Neuron::getOutput(const double* const inputs) {
       }
    }
 
-   for(int inputIndex = 0; inputIndex < inputsAmount ; inputIndex++){
+   for(int inputIndex = 0; inputIndex < inputLength ; inputIndex++){
       vk += synapses[inputIndex+synapsesOffset] * inputs[inputIndex];
    }
    this->lastExit = activationFunction(vk);
@@ -131,4 +163,32 @@ sigma = summation  * f'()
 */
 double Neuron::currentNeuronSigma(double summation) {
    return activationFunctionDerivated(summation);
+}
+
+void Neuron::validateDentrites(int inputLength){
+   if(inputLength != this->numberOfDentrites) {
+      printf("=========numberOfDentrites must be == %i============ \n", this->numberOfDentrites);
+      assert(false);
+   }
+
+   return;
+}
+
+void Neuron::validateInputs(int inputs) {
+   switch (biasType) {
+      case BIAS_NONE:
+      if(inputs != this->numberOfDentrites) {
+          printf("=========inputs must be == %i ============ \n", this->numberOfDentrites);
+         assert( false);
+      }
+      break;
+      case BIAS_POSITIVE:
+      case BIAS_NEGATIVE:
+      if(inputs != (this->numberOfDentrites-1)) {
+          printf("=========inputs must be == %i ============ \n", (this->numberOfDentrites-1));
+         assert( false);
+      } 
+      break;
+   }
+   return ;
 }

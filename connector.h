@@ -36,7 +36,7 @@ The amount of output is the number of neurons of the last layer !!
 return a colection of values of the last layer
 It is the output of the neuronal Network
 */
-   double* getOutput(const double* const inputs); 
+   double* getOutput(int length, const double* const inputs); 
 
   
 
