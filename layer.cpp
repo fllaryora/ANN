@@ -36,6 +36,10 @@ Layer::~Layer(){
 }
 
 Neuron* Layer:: getNeuronAt(int index){
+   if( index < 0 || index >= layerNeuronAmount ) {
+   printf("========= getNeuronAt index is less than 0 or greather than %i ============ \n", layerNeuronAmount-1);
+      assert(false);
+   }
    return &neuronArray[index];
 }
 

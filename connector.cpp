@@ -1,6 +1,7 @@
 #include "connector.h"
 #include "neuron.h"
 #include "layer.h"
+#include <assert.h>
 
 ArtificialNeuralNetwork::ArtificialNeuralNetwork(int layers, int enties, int* neuronsPerLayer,
  int activationFunctionType, int lastLayerActivationFunction, int biasType){
@@ -41,107 +42,108 @@ ArtificialNeuralNetwork::~ArtificialNeuralNetwork(){
 }
 
 Layer* ArtificialNeuralNetwork::getLayer(int layerIndex){
+   if( layerIndex < 0 || layerIndex >= layersAmount ) {
+   printf("========= getLayer layerIndex is less than 0 or greather than %i ============ \n", layersAmount-1);
+      assert(false);
+   }
    return &layertArray[layerIndex];
 }
 
+
 double*
 ArtificialNeuralNetwork::getOutput(int length, const double* const inputs){
-   double* temporalOutputOfLayer = new double [maxAmountOfNeuronsInALayer];
-   double* temporalOutputOfLayer2 = new double [maxAmountOfNeuronsInALayer];
-   int newInputLength = 0;
-   //a bug of g++ here
-   //use the pointer always other wise the end of the for will call the destructor for you.
-   Layer* layer = &layertArray[0];
-   int neuronAmount = layer->getLayerNeuronAmount();
-    for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-       printf("=========PRE===%i=====%i==== \n",0,neuronIndex);
-      temporalOutputOfLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getOutput(length, inputs);
-      printf("=========POST============ \n");
-   }
-   newInputLength = neuronAmount;
+   double* temporalOutputOfEvenLayer = new double [maxAmountOfNeuronsInALayer];
+   double* temporalOutputOfOddLayer = new double [maxAmountOfNeuronsInALayer];
+
+   int newInputLength = evaluateLayer(0 ,length, inputs, temporalOutputOfEvenLayer);
+
    for(int layerIndex = 1; layerIndex < layersAmount ; layerIndex++) {
-      //a bug of g++ here
-      //use the pointer always other wise the end of the for will call the destructor for you.
-      Layer* layer = &layertArray[layerIndex];
-      int neuronAmount = layer->getLayerNeuronAmount(); 
-      for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-         Neuron* neuron = layer->getNeuronAt(neuronIndex);
-         if ( layerIndex & 1 ) {
-            printf("=========PRE===%i=====%i==== \n",layerIndex,neuronIndex);
-            temporalOutputOfLayer2[neuronIndex] = neuron->getOutput(newInputLength, temporalOutputOfLayer);
-            printf("=========POS============ \n");
-         } else {
-            printf("=========PRE===%i=====%i==== \n",layerIndex,neuronIndex);
-            temporalOutputOfLayer[neuronIndex] = neuron->getOutput(newInputLength, temporalOutputOfLayer2);
-            printf("=========POS============ \n");
-         }
-      }
-      newInputLength = neuronAmount;
-   }
-   printf("=========COPY TIME============ \n");
-   layer = &layertArray[layersAmount-1];
-   neuronAmount = layer->getLayerNeuronAmount(); 
-   int lastLayerIndex = layersAmount-1;
-   if ( lastLayerIndex & 1 ) {
-      printf("=========ODD COPY============ \n");
-      for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-         printf("=========COPY Neuron : %i==of===%i======= \n", neuronIndex, maxAmountOfNeuronsInALayer);
-         outputOfTheLastLayer[neuronIndex] = temporalOutputOfLayer2[neuronIndex];    
-      }
-   } else {
-      printf("=========EVEN COPY============ \n");
-      for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-         printf("=========COPY Neuron : %i==of===%i======= \n", neuronIndex, maxAmountOfNeuronsInALayer);
-         outputOfTheLastLayer[neuronIndex] = temporalOutputOfLayer[neuronIndex]; 
+      if ( layerIndex & 1 ) {
+         newInputLength = evaluateLayer(layerIndex ,newInputLength, temporalOutputOfEvenLayer, temporalOutputOfOddLayer);
+      } else {
+         newInputLength = evaluateLayer(layerIndex ,newInputLength, temporalOutputOfOddLayer, temporalOutputOfEvenLayer);
       }
    }
-   delete [] temporalOutputOfLayer2;
-   delete [] temporalOutputOfLayer;
+
+   copyOutput();
+   delete [] temporalOutputOfOddLayer;
+   delete [] temporalOutputOfEvenLayer;
    return outputOfTheLastLayer;
 }
 
-double ArtificialNeuralNetwork::sigma(int layerIndex, int neuronIndex, double expectedOutput) {
-
-   //exit condition: If I'm the last layer
-   if(layerIndex == (layersAmount-1) ){
-      return layertArray[layerIndex].getNeuronAt(neuronIndex)->
-         lastNeuronSigma(expectedOutput);
+int
+ArtificialNeuralNetwork::evaluateLayer(int layerIndex, int length,
+ const double* const inputs, double* output){
+    //a bug of g++ here?
+   //use the pointer always otherwise at the end of the scope it will call the destructor.
+    Layer* layer = &layertArray[layerIndex];
+   int neuronAmount = layer->getLayerNeuronAmount();
+    for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
+       printf("=========PRE===%i=====%i==== \n", layerIndex,neuronIndex);
+      output[neuronIndex] = layer->getNeuronAt(neuronIndex)->getOutput(length, inputs);
+      printf("=========POST============ \n");
    }
-
-   double sI;
-   double* wIN;
-   double summation = 0.0;
-   //otherwise get the summation of
-   // the sigmas multiplied by synaptic weight going from the current neuron 
-   //to that neuron of next layer
-   int neuronAmount = layertArray[layerIndex+1].getLayerNeuronAmount(); 
-   for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
-      sI = sigma(layerIndex+1, neuronIndex, expectedOutput);
-      wIN = layertArray[layerIndex+1].getNeuronAt(neuronIndex)->getSynapses();
-      summation += sI*wIN[neuronIndex];
-   }
-
-   return layertArray[layerIndex].getNeuronAt(neuronIndex)->
-      currentNeuronSigma(summation);
+   return neuronAmount;
 }
 
-void ArtificialNeuralNetwork::fixSynapses(int layerIndex, int neuronIndex,double alpha, double expectedOutput){
-   double* inputReceived;
-   double* WJI;
-   double sigmaLayerNeuron;
-
-   /* The amount of entries of the layer i ,
-   is equal on the amount of outputs on the layer i-1 (the layer before)*/
-   int amountOfEntrys = layertArray[layerIndex-1].getLayerNeuronAmount();
-
-   //for each dentrite I look for its synapse and the input it had
-   //the outcome of the last layer
-   //inputReceived = layertArray[layerIndex-1].getOutputCollection();
-   WJI = layertArray[layerIndex].getNeuronAt(neuronIndex)->getSynapses();
-   sigmaLayerNeuron = sigma(layerIndex,neuronIndex, expectedOutput);
-   for(int dentriteIndex = 0; dentriteIndex < amountOfEntrys;dentriteIndex++) {
-      //update the synapses
-      WJI[dentriteIndex] +=  alpha * sigmaLayerNeuron * inputReceived[dentriteIndex];
+void
+ArtificialNeuralNetwork::copyOutput() {
+   Layer* layer = &layertArray[layersAmount-1];
+   int neuronAmount = layer->getLayerNeuronAmount();
+   for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
+       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+      outputOfTheLastLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastExit();
+      printf("=========POST COPY============ \n");
    }
+   return;
+}
+
+void ArtificialNeuralNetwork::fixSynapses(double alpha, double expectedOutput){
+   /*
+   double* temporalSigmaOfLayer = new double [maxAmountOfNeuronsInALayer];
+   double* temporalSigmaOfLayer2 = new double [maxAmountOfNeuronsInALayer];
+   double* synapsesOfCurrentNeuron;
+
+   //First: get last layer sigmas
+   int neuronAmount = layertArray[(layersAmount-1)].getLayerNeuronAmount();
+   if ( (layersAmount-1) & 1 ) {
+       for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
+          synapsesOfCurrentNeuron = layertArray[(layersAmount-1)].
+            getNeuronAt(neuronIndex)->getSynapses();
+         temporalSigmaOfLayer2[neuronIndex] = layertArray[(layersAmount-1)].
+            getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
+         for()
+            synapsesOfCurrentNeuron[neuronIndex] +=  alpha * temporalSigmaOfLayer2[neuronIndex] * inputReceived[neuronIndex];
+       }
+   } else {
+       for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
+          synapsesOfCurrentNeuron = layertArray[(layersAmount-1)].
+            getNeuronAt(neuronIndex)->getSynapses();
+         temporalSigmaOfLayer[neuronIndex] = layertArray[(layersAmount-1)].
+            getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
+       }
+   }
+
+   //So I need he last layer sigma for the next calculation
+   for (int layerIndex = (layersAmount-2); layerIndex >= 0;layerIndex--) {
+      /* The amount of entries of the layer i ,
+      is equal on the amount of outputs on the layer i-1 (the layer before)
+      
+      if ( (layersAmount-1) & 1 ) {
+         for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
+            temporalSigmaOfLayer2[neuronIndex] = layertArray[(layersAmount-1)].
+               getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
+         }
+      } else {
+         for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
+            temporalSigmaOfLayer[neuronIndex] = layertArray[(layersAmount-1)].
+               getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
+         }
+      }
+   }
+
+   delete [] temporalSigmaOfLayer;
+   delete [] temporalSigmaOfLayer2;
+   */
    return;
 }

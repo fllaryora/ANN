@@ -38,27 +38,23 @@ It is the output of the neuronal Network
 */
    double* getOutput(int length, const double* const inputs); 
 
-  
 
    /* 
    calculate the error gotten and set a new set of synapses.
-   
-   This class violates the principle of level of abstraction because
-   the neuronIndex need to read the values of the siblings in the network
    using back propagation algorithm.
    alpha = punishment factor
    */
-   void fixSynapses(int layerIndex, int neuronIndex,double alpha, double expectedOutput);
+   void fixSynapses(double alpha, double expectedOutput);
 
 private:
    int layersAmount;
    double* outputOfTheLastLayer;
    Layer* layertArray;
    int maxAmountOfNeuronsInALayer;
-   /*
-   calculate the error gotten
+   /* return the new input lenght
    */
-   double sigma(int layerIndex, int I, double expectedOutput);
+   int evaluateLayer(int layerIndex, int length, const double* const inputs, double* output);
+   void copyOutput();
 };
 #endif //_CONNECTOR_H_
 
