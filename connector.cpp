@@ -92,58 +92,83 @@ ArtificialNeuralNetwork::copyOutput() {
    int neuronAmount = layer->getLayerNeuronAmount();
    for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
        printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
-      outputOfTheLastLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastExit();
+      outputOfTheLastLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastOutcome();
       printf("=========POST COPY============ \n");
    }
    return;
 }
 
-void ArtificialNeuralNetwork::fixSynapses(double alpha, double expectedOutput){
-   /*
-   double* temporalSigmaOfLayer = new double [maxAmountOfNeuronsInALayer];
-   double* temporalSigmaOfLayer2 = new double [maxAmountOfNeuronsInALayer];
-   double* synapsesOfCurrentNeuron;
-
-   //First: get last layer sigmas
-   int neuronAmount = layertArray[(layersAmount-1)].getLayerNeuronAmount();
-   if ( (layersAmount-1) & 1 ) {
-       for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
-          synapsesOfCurrentNeuron = layertArray[(layersAmount-1)].
-            getNeuronAt(neuronIndex)->getSynapses();
-         temporalSigmaOfLayer2[neuronIndex] = layertArray[(layersAmount-1)].
-            getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
-         for()
-            synapsesOfCurrentNeuron[neuronIndex] +=  alpha * temporalSigmaOfLayer2[neuronIndex] * inputReceived[neuronIndex];
-       }
-   } else {
-       for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
-          synapsesOfCurrentNeuron = layertArray[(layersAmount-1)].
-            getNeuronAt(neuronIndex)->getSynapses();
-         temporalSigmaOfLayer[neuronIndex] = layertArray[(layersAmount-1)].
-            getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
-       }
+int
+ArtificialNeuralNetwork::copyOutputOfLayer(int layerIndex, double* output) {
+   Layer* layer = &layertArray[layerIndex];
+   int neuronAmount = layer->getLayerNeuronAmount();
+   for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
+       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+      output[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastOutcome();
+      printf("=========POST COPY============ \n");
    }
+   return neuronAmount;
+}
 
-   //So I need he last layer sigma for the next calculation
-   for (int layerIndex = (layersAmount-2); layerIndex >= 0;layerIndex--) {
-      /* The amount of entries of the layer i ,
-      is equal on the amount of outputs on the layer i-1 (the layer before)
+void ArtificialNeuralNetwork::fixSynapses( double alpha,
+      int lengthOfInput, const double* const inputs,
+      int lengthOfOutput, const double* const expectedOutput) {
       
-      if ( (layersAmount-1) & 1 ) {
-         for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
-            temporalSigmaOfLayer2[neuronIndex] = layertArray[(layersAmount-1)].
-               getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
-         }
-      } else {
-         for(int neuronIndex = 0;neuronIndex < neuronAmount ;neuronIndex++){
-            temporalSigmaOfLayer[neuronIndex] = layertArray[(layersAmount-1)].
-               getNeuronAt(neuronIndex)->lastNeuronSigma(expectedOutput);
-         }
-      }
+   //First set each sigma to each neuron.
+   applySigmaForLastLayer( lengthOfOutput, expectedOutput );
+   for (int layerIndex = layersAmount-2; layerIndex >= 0 ;layerIndex-- ){
+      applySigmaForLayer(layerIndex);
    }
 
-   delete [] temporalSigmaOfLayer;
-   delete [] temporalSigmaOfLayer2;
-   */
+   double* temporalInputLayer = new double [maxAmountOfNeuronsInALayer];
+   int inputLength = lengthOfInput;
+   for(int neuronIndex = 0; neuronIndex < inputLength ; neuronIndex++) {
+       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+      temporalInputLayer[neuronIndex] = inputs[neuronIndex];
+      printf("=========POST COPY============ \n");
+   }
+   for(int layerIndex = 0; layerIndex < layersAmount ; layerIndex++) {
+      Layer* layer = &layertArray[layerIndex];
+      int neuronAmount = layer->getLayerNeuronAmount();
+      for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++){
+         layer->getNeuronAt(neuronIndex)->fixSynapses(inputLength, temporalInputLayer, alpha);
+      }
+      inputLength = copyOutputOfLayer(layerIndex, temporalInputLayer);
+   }
+   
+   delete [] temporalInputLayer;
+   return;
+}
+
+void ArtificialNeuralNetwork::applySigmaForLastLayer(int lengthOfOutput, const double* const expectedOutput ) {
+//for the last layer...
+   Layer* layer = &layertArray[(layersAmount-1)];
+   int neuronAmount = layer->getLayerNeuronAmount();
+   assert(lengthOfOutput == neuronAmount);
+   for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++){
+      double lastOutcome = layer->getNeuronAt(neuronIndex)->getLastOutcome();
+      layer->getNeuronAt(neuronIndex)->calculateSigma(expectedOutput[neuronIndex]-lastOutcome);
+   }
+}
+
+void ArtificialNeuralNetwork::applySigmaForLayer(int layerIndex) {
+      if( layerIndex >= (layersAmount-1) || layerIndex < 0) {
+         printf("=========applySigmaForLayer BAD INDEX===%i========= \n", layerIndex);
+         assert(false);
+      }
+      Layer* nextLayer = &layertArray[layerIndex+1];
+      int nextAmount = nextLayer->getLayerNeuronAmount();
+      Layer* thisLayer = &layertArray[layerIndex];
+      int neuronAmount2 = thisLayer->getLayerNeuronAmount();
+      for(int neuronIndex = 0; neuronIndex < neuronAmount2 ; neuronIndex++){
+         double summation = 0.0;
+         for(int neuronIndexPast = 0; neuronIndexPast < nextAmount ; neuronIndexPast++){
+            double sigma = nextLayer->getNeuronAt(neuronIndexPast)->getLastSigma();
+            //this is the bound between this neuron with the other
+            double synaps = nextLayer->getNeuronAt(neuronIndexPast)->getBoundSynapses(neuronIndex);
+            summation += sigma * synaps;
+         }
+         thisLayer->getNeuronAt(neuronIndex)->calculateSigma(summation);
+      }
    return;
 }

@@ -44,7 +44,9 @@ It is the output of the neuronal Network
    using back propagation algorithm.
    alpha = punishment factor
    */
-   void fixSynapses(double alpha, double expectedOutput);
+   void fixSynapses(double alpha,
+      int lengthOfInput, const double* const inputs,
+      int lengthOfOutput, const double* const expectedOutput);
 
 private:
    int layersAmount;
@@ -55,6 +57,10 @@ private:
    */
    int evaluateLayer(int layerIndex, int length, const double* const inputs, double* output);
    void copyOutput();
+   int copyOutputOfLayer(int layerIndex, double* output);
+
+   void applySigmaForLayer(int layerIndex);
+   void applySigmaForLastLayer(int lengthOfOutput, const double* const expectedOutput );
 };
 #endif //_CONNECTOR_H_
 

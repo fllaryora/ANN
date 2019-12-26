@@ -1,10 +1,10 @@
-main: neuron.o layer.o connector.o
+main: neuron.o layer.o connector.o testlayer
 	g++ -g -Wall connector.o layer.o neuron.o main.cpp -O0 -o main.exe
 
 testneuron: neuron.o
 	g++ -g -Wall neuronTest.cpp neuron.o -O0 -o neuron.exe
 
-testlayer: neuron.o layer.o
+testlayer: neuron.o layer.o testneuron
 	g++ -g -Wall layerTest.cpp  neuron.o layer.o -O0 -o layer.exe
 
 connector: neuron.o layer.o connector.h connector.cpp

@@ -55,9 +55,10 @@ public:
    ~Neuron();
    void setSynapses(int inputLength, const double* const synapses);
    double* getSynapses();
-
+   double getBoundSynapses(int entryNumber);
    double getOutput(int inputLength, const double* const inputs); 
-   double getLastExit();
+   double getLastOutcome();
+   double getLastSigma();
 
   /*
   Return real dentrites+bias dentrite if it exists.
@@ -74,28 +75,30 @@ public:
   */
    int getActivationType();
    /*
-   If this Neuron is in the last layer it will be called.
-   */
-   double lastNeuronSigma(double expectedOutput);
-
-   /*
    return sigma of the neuron
    */
-   double currentNeuronSigma(double summation);
-
-   void getSigma();
+   double calculateSigma(double summation);
+   /*
+    inputLength = number of elements of inputs,
+   inputs = values of the enties,
+   alpha = the punishment rate of the mistake,
+   sigma =the rate of mistake.
+   */
+   void fixSynapses(int inputLength, const double* const inputs, double alpha);
 
 private:
    int numberOfDentrites;
    int activationType;
    int biasType;
    double * synapses;
-   double lastExit;
+   double lastOutcome;
+   double lastSigma;
    double activationFunction(double vk);
    double activationFunctionDerivated(double vk);
    void validateNeuronInputs(int numberOfDentrites, int activationType, int biasType);
    void validateDentrites(int numberOfDentrites);
    void validateInputs(int inputs);
+   void validateBound(int entry);
 
 };
 #endif //_NEURON_H_

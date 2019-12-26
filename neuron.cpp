@@ -86,10 +86,10 @@ double Neuron::activationFunctionDerivated(double summation) {
    double result ;
   switch (activationType) {
       case ACTIVATION_FUNCTION_HIPERBOLIC_TANGENT:
-         result = summation*2.0*lastExit*(1.0-lastExit);
+         result = summation*2.0*lastOutcome*(1.0-lastOutcome);
          break;
       case ACTIVATION_FUNCTION_SIGMOID:
-         result = summation*lastExit*(1.0-lastExit);
+         result = summation*lastOutcome*(1.0-lastOutcome);
          break;
       case ACTIVATION_FUNCTION_LINEAL:
          result = summation;
@@ -109,6 +109,16 @@ Neuron::setSynapses(int inputLength, const double* const newSynapses) {
 
 double* Neuron::getSynapses(){
    return synapses;
+}
+
+double Neuron::getBoundSynapses(int entryNumber){
+   validateBound(entryNumber);
+   int synapsesOffset = 0;
+   if (biasType != BIAS_NONE) {
+      synapsesOffset = 1;
+   }
+
+   return synapses[entryNumber + synapsesOffset];
 }
 
 double
@@ -131,12 +141,12 @@ Neuron::getOutput(int inputLength, const double* const inputs) {
    for(int inputIndex = 0; inputIndex < inputLength ; inputIndex++){
       vk += synapses[inputIndex+synapsesOffset] * inputs[inputIndex];
    }
-   this->lastExit = activationFunction(vk);
-   return this->lastExit;
+   this->lastOutcome = activationFunction(vk);
+   return this->lastOutcome;
 }
 
-double Neuron::getLastExit(){
-   return lastExit;
+double Neuron::getLastOutcome(){
+   return lastOutcome;
 }
 
 int Neuron::getNumberOfDentrites(){
@@ -152,19 +162,16 @@ int Neuron:: getBiasType(){
  }
 
 /*
-sigma = -error * f'()
-*/
-double Neuron::lastNeuronSigma(double expectedOutput){
-   return activationFunctionDerivated(lastExit - expectedOutput);
-}
-
-/*
 sigma = summation  * f'()
 */
-double Neuron::currentNeuronSigma(double summation) {
-   return activationFunctionDerivated(summation);
+double Neuron::calculateSigma(double summation) {
+   lastSigma = activationFunctionDerivated(summation);
+   return lastSigma;
 }
 
+double Neuron::getLastSigma() {
+   return lastSigma;
+}
 void Neuron::validateDentrites(int inputLength){
    if(inputLength != this->numberOfDentrites) {
       printf("=========numberOfDentrites must be == %i============ \n", this->numberOfDentrites);
@@ -191,4 +198,50 @@ void Neuron::validateInputs(int inputs) {
       break;
    }
    return ;
+}
+
+void Neuron::validateBound(int entry) {
+   if(entry < 0) {
+      printf("=========entry must be at least == 0 ============ \n");
+      assert( false );
+   }
+
+   switch (biasType) {
+      case BIAS_NONE:
+      if(entry >= this->numberOfDentrites) {
+          printf("=========entry must be less than %i ============ \n", this->numberOfDentrites);
+         assert( false);
+      }
+      break;
+      case BIAS_POSITIVE:
+      case BIAS_NEGATIVE:
+      if(entry >= (this->numberOfDentrites-1)) {
+          printf("=========entry must be less than %i ============ \n", this->numberOfDentrites-1);
+         assert( false);
+      }
+      break;
+   }
+   return ;
+}
+
+void Neuron::fixSynapses(int inputLength, const double* const inputs, double alpha){
+   validateInputs(inputLength);
+
+   int synapsesOffset = 0;
+
+    if (biasType != BIAS_NONE) {
+      synapsesOffset = 1;
+      if(biasType == BIAS_POSITIVE) {
+          synapses[0] -= alpha * lastSigma * 1;
+      }
+      if(biasType == BIAS_NEGATIVE) {
+          synapses[0] -= alpha * lastSigma * -1;
+      }
+   }
+   
+   //for each dentrite find each sinaps and their entry
+   for(int dentriteIndex = 0; dentriteIndex < inputLength ;dentriteIndex++) {
+      synapses[dentriteIndex+synapsesOffset] += alpha * lastSigma * inputs[dentriteIndex];
+   }
+   return;
 }
