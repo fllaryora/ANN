@@ -43,7 +43,7 @@ ArtificialNeuralNetwork::~ArtificialNeuralNetwork(){
 
 Layer* ArtificialNeuralNetwork::getLayer(int layerIndex){
    if( layerIndex < 0 || layerIndex >= layersAmount ) {
-   printf("========= getLayer layerIndex is less than 0 or greather than %i ============ \n", layersAmount-1);
+   //printf("========= getLayer layerIndex is less than 0 or greather than %i ============ \n", layersAmount-1);
       assert(false);
    }
    return &layertArray[layerIndex];
@@ -74,14 +74,13 @@ ArtificialNeuralNetwork::getOutput(int length, const double* const inputs){
 int
 ArtificialNeuralNetwork::evaluateLayer(int layerIndex, int length,
  const double* const inputs, double* output){
-    //a bug of g++ here?
    //use the pointer always otherwise at the end of the scope it will call the destructor.
     Layer* layer = &layertArray[layerIndex];
    int neuronAmount = layer->getLayerNeuronAmount();
     for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-       printf("=========PRE===%i=====%i==== \n", layerIndex,neuronIndex);
+      // printf("=========PRE===%i=====%i==== \n", layerIndex,neuronIndex);
       output[neuronIndex] = layer->getNeuronAt(neuronIndex)->getOutput(length, inputs);
-      printf("=========POST============ \n");
+     // printf("=========POST============ \n");
    }
    return neuronAmount;
 }
@@ -91,9 +90,9 @@ ArtificialNeuralNetwork::copyOutput() {
    Layer* layer = &layertArray[layersAmount-1];
    int neuronAmount = layer->getLayerNeuronAmount();
    for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+     //  printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
       outputOfTheLastLayer[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastOutcome();
-      printf("=========POST COPY============ \n");
+      //printf("=========POST COPY============ \n");
    }
    return;
 }
@@ -103,9 +102,9 @@ ArtificialNeuralNetwork::copyOutputOfLayer(int layerIndex, double* output) {
    Layer* layer = &layertArray[layerIndex];
    int neuronAmount = layer->getLayerNeuronAmount();
    for(int neuronIndex = 0; neuronIndex < neuronAmount ; neuronIndex++) {
-       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+      // printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
       output[neuronIndex] = layer->getNeuronAt(neuronIndex)->getLastOutcome();
-      printf("=========POST COPY============ \n");
+      //printf("=========POST COPY============ \n");
    }
    return neuronAmount;
 }
@@ -123,9 +122,9 @@ void ArtificialNeuralNetwork::fixSynapses( double alpha,
    double* temporalInputLayer = new double [maxAmountOfNeuronsInALayer];
    int inputLength = lengthOfInput;
    for(int neuronIndex = 0; neuronIndex < inputLength ; neuronIndex++) {
-       printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
+      // printf("=========COPY===%i=====%i==== \n", layersAmount-1, neuronIndex);
       temporalInputLayer[neuronIndex] = inputs[neuronIndex];
-      printf("=========POST COPY============ \n");
+      //printf("=========POST COPY============ \n");
    }
    for(int layerIndex = 0; layerIndex < layersAmount ; layerIndex++) {
       Layer* layer = &layertArray[layerIndex];
@@ -153,7 +152,7 @@ void ArtificialNeuralNetwork::applySigmaForLastLayer(int lengthOfOutput, const d
 
 void ArtificialNeuralNetwork::applySigmaForLayer(int layerIndex) {
       if( layerIndex >= (layersAmount-1) || layerIndex < 0) {
-         printf("=========applySigmaForLayer BAD INDEX===%i========= \n", layerIndex);
+         //printf("=========applySigmaForLayer BAD INDEX===%i========= \n", layerIndex);
          assert(false);
       }
       Layer* nextLayer = &layertArray[layerIndex+1];

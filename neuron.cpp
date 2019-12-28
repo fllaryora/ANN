@@ -39,7 +39,7 @@ Neuron::~Neuron(){
 void
 Neuron:: validateNeuronInputs(int numberOfDentrites, int activationType, int biasType) {
  if(numberOfDentrites < 1) {
-      printf("=========numberOfDentrites must be >= 1============ \n");
+      //printf("=========numberOfDentrites must be >= 1============ \n");
       assert(numberOfDentrites < 1);
    }
 
@@ -48,7 +48,7 @@ Neuron:: validateNeuronInputs(int numberOfDentrites, int activationType, int bia
       case BIAS_POSITIVE:
       case BIAS_NEGATIVE: break;
       default:
-         printf("=========this biasType is unimplemented============ \n");
+         //printf("=========this biasType is unimplemented============ \n");
          assert( false);
        break;
    }
@@ -58,7 +58,7 @@ Neuron:: validateNeuronInputs(int numberOfDentrites, int activationType, int bia
       case ACTIVATION_FUNCTION_SIGMOID:
       case ACTIVATION_FUNCTION_LINEAL: break;
       default:
-         printf("=========this activationType is unimplemented============ \n");
+         //printf("=========this activationType is unimplemented============ \n");
          assert( false);
       break;
    }
@@ -78,7 +78,7 @@ Neuron:: validateNeuronInputs(int numberOfDentrites, int activationType, int bia
          break;
       default: break;
    }
-   printf("vk == %f  \n", vk);
+   //printf("vk == %f  \n", vk);
    return result;
  }
 
@@ -174,7 +174,7 @@ double Neuron::getLastSigma() {
 }
 void Neuron::validateDentrites(int inputLength){
    if(inputLength != this->numberOfDentrites) {
-      printf("=========numberOfDentrites must be == %i============ \n", this->numberOfDentrites);
+      //printf("=========numberOfDentrites must be == %i============ \n", this->numberOfDentrites);
       assert(false);
    }
 
@@ -185,14 +185,14 @@ void Neuron::validateInputs(int inputs) {
    switch (biasType) {
       case BIAS_NONE:
       if(inputs != this->numberOfDentrites) {
-          printf("=========inputs must be == %i ============ \n", this->numberOfDentrites);
+          //printf("=========inputs must be == %i ============ \n", this->numberOfDentrites);
          assert( false);
       }
       break;
       case BIAS_POSITIVE:
       case BIAS_NEGATIVE:
       if(inputs != (this->numberOfDentrites-1)) {
-          printf("=========inputs must be == %i ============ \n", (this->numberOfDentrites-1));
+          //printf("=========inputs must be == %i ============ \n", (this->numberOfDentrites-1));
          assert( false);
       } 
       break;
@@ -202,21 +202,21 @@ void Neuron::validateInputs(int inputs) {
 
 void Neuron::validateBound(int entry) {
    if(entry < 0) {
-      printf("=========entry must be at least == 0 ============ \n");
+      //printf("=========entry must be at least == 0 ============ \n");
       assert( false );
    }
 
    switch (biasType) {
       case BIAS_NONE:
       if(entry >= this->numberOfDentrites) {
-          printf("=========entry must be less than %i ============ \n", this->numberOfDentrites);
+          //printf("=========entry must be less than %i ============ \n", this->numberOfDentrites);
          assert( false);
       }
       break;
       case BIAS_POSITIVE:
       case BIAS_NEGATIVE:
       if(entry >= (this->numberOfDentrites-1)) {
-          printf("=========entry must be less than %i ============ \n", this->numberOfDentrites-1);
+         // printf("=========entry must be less than %i ============ \n", this->numberOfDentrites-1);
          assert( false);
       }
       break;

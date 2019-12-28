@@ -16,7 +16,7 @@ Layer::Layer(){
 void
 Layer::init(int neuronAmount, int activationType, int enties, int biasType){
    if (neuronAmount <= 0){
-      printf("=========neuronAmount per layer must be at least 1============ \n");
+      //printf("=========neuronAmount per layer must be at least 1============ \n");
       assert(false);
    }
    
@@ -37,7 +37,7 @@ Layer::~Layer(){
 
 Neuron* Layer:: getNeuronAt(int index){
    if( index < 0 || index >= layerNeuronAmount ) {
-   printf("========= getNeuronAt index is less than 0 or greather than %i ============ \n", layerNeuronAmount-1);
+   //printf("========= getNeuronAt index is less than 0 or greather than %i ============ \n", layerNeuronAmount-1);
       assert(false);
    }
    return &neuronArray[index];
