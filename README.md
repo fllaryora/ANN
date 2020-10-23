@@ -108,7 +108,7 @@ In the Neuron i, in the time t, for each w:
 With a learning rate alpha
 The new w  in the time t+1 will be.
 
-![equation](https://latex.codecogs.com/gif.latex?w_t_&plus;_1%20%3D%20w_t%20&plus;%20%5Calpha%20%5Cdelta_i)
+![equation](https://latex.codecogs.com/gif.latex?w_{t&plus;1}&space;=&space;w_{t}&space;&plus;&space;\alpha&space;\delta_{i})
 
 Thats all!
 
